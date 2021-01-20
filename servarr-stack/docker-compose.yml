@@ -1,0 +1,66 @@
+version: "3.8"
+
+networks:
+  default:
+    external:
+      name: bridge-vpn
+
+services:
+  transmission:
+    container_name: transmission
+    image: linuxserver/transmission
+    restart: unless-stopped
+    environment:
+      - PUID=1500
+      - PGID=1500
+      - TZ=Australia/Sydney
+    volumes:
+      - /home/josh/servarr/transmission:/config
+      - /media/torrents/complete:/downloads
+    ports:
+      - 9091:9091
+      - 51413:51413
+      - 51413:51413/udp
+
+  jackett:
+    container_name: jackett
+    image: linuxserver/jackett:latest
+    restart: unless-stopped
+    environment:
+      - PUID=1500
+      - PGID=1500
+      - TZ=Australia/Sydney
+    volumes:
+      - /home/josh/servarr/jackett:/config
+    ports:
+      - 9117:9117
+
+  radarr:
+    container_name: radarr
+    image: linuxserver/radarr:develop
+    restart: unless-stopped
+    environment:
+      - PUID=1500
+      - PGID=1500
+      - TZ=Australia/Sydney
+    volumes:
+      - /home/josh/servarr/radarr:/config
+      - /media/torrents/complete/radarr:/downloads
+      - /media/movies:/movies
+    ports:
+      - 7878:7878
+
+  sonarr:
+    container_name: sonarr
+    image: linuxserver/sonarr:preview
+    restart: unless-stopped
+    environment:
+      - PUID=1500
+      - PGID=1500
+      - TZ=Australia/Sydney
+    volumes:
+      - /home/josh/servarr/sonarr:/config
+      - /media/torrents/complete/sonarr:/downloads
+      - /media/tv_shows:/tv
+    ports:
+      - 8989:8989
